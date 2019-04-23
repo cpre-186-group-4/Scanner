@@ -1,0 +1,73 @@
+import RPi.GPIO as GPIO
+from time import *
+import math
+#from picamera import PiCamera
+import IMU
+
+#camera = PiCamera()
+GPIO.setmode(GPIO.BCM)
+
+sleepTime = 0.1
+lightPin = 0
+buttonPin = 0
+button = 0
+pressed = True
+count = 0
+Accel = 0
+Velocity = 0
+Position = 0
+StartTime = 0
+IMU.detectIMU()
+IMU.initIMU()
+#GPIO.setup(lightPin, GPIO.out)
+#GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPI.PUD_UP)
+#GPIO.output(lightPin, False)
+
+def mag(x, y, z):
+	return math.sqrt((x*x)+(y*y)+(z*z))
+
+def calculate(count, A, V, P, T):
+	t = time() - T
+#	print("time: %.2f | T: %.2f" % (t, T))
+	magX = IMU.readMAGx()
+	magY = IMU.readMAGy()
+	magZ = IMU.readMAGz()
+	gX = IMU.readGYRx()
+	gY = IMU.readGYRy()
+	gZ = IMU.readGYRz()
+	accX = ((IMU.readACCx() * 0.732) / 1000)
+	accY = ((IMU.readACCy() * 0.732) / 1000)
+	accZ = ((IMU.readACCz() * 0.732) / 1000)
+	A = mag(accX, accY, accZ)
+#	print("X: %.2f | Y: %.2f | Z: %.2f | A: %.2f" % (accX, accY, accZ, A))
+	Gyro = mag(gX, gY, gZ)
+	if count >= 1:
+		V_last = V
+		P_last = P
+		V =  (t * A)
+		P = y
+ ((1.0/2.0) * A * (t * t)) 
+	print("A = %.2f | V = %.2f | P = %.2f" % (A, V, P))
+
+try:
+	StartTime = time()
+	while pressed:
+#		print("Start Time: %.2f" % StartTime)
+#		if(GPIO.input(buttonPin) == 0:
+#			button = 0
+#			camera.start_recording('video.h264')
+#			sleep(sleepTime)
+#			if button == 1:
+#				if(GPIO.input(buttonPin) == 0:
+#					pressed = false
+#			if button == 1:
+		count += 1
+		calculate(count, Accel, Velocity, Position, StartTime)
+#			GPIO.output(lightPin, button)
+		sleep(sleepTime)
+
+finally:
+	print("finished")
+#	GPIO.output(lightPin, false)
+#	camera.stop_recording()
+#	GPIO.cleanup()
