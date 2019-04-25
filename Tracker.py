@@ -38,7 +38,7 @@ def calculate(Vectors, count, T):
 	accX = ((IMU.readACCx() * 0.732) / 1000)
 	accY = ((IMU.readACCy() * 0.732) / 1000)
 	accZ = ((IMU.readACCz() * 0.732) / 1000)
-	#creates the position
+	#creates the position and rotation
 	if count >= 1:
 		vx = (t * accX)
 		vy = (t * accY)
@@ -51,10 +51,11 @@ def calculate(Vectors, count, T):
 		Yaw = math.atan(accZ/math.sqrt((accX * accX) + (accY * accY)))
 	#adds it to the array
 	Vectors.append([px, py, pz, Pitch, Roll, Yaw])
-
+	
+	#foramts the values in the array
 	format(Vectors(len([Vectors])-1)
 
-	#sends it over to be added to the CSV file
+	#Updates the vectors array
 	return Vectors
 
 #Formats every value to 2 decimal spots
@@ -73,7 +74,6 @@ def printVectors(V):
 try:
 	StartTime = time() #Intial Time
 	while pressed:
-
 		if(GPIO.input(buttonPin) == 0: #Pressed
 			button = 1 #Set it to pressed
 			camera.start_recording('3D_Scan.h264')#Start recording the video
@@ -87,7 +87,7 @@ try:
 			GPIO.output(lightPin, button) #Keeps the light turned on
 			sleep(sleepTime)
 
-#After stop the video and close everything
+#After button is pressed again, stop the video and close everything
 finally:
 	printVectors(Vectors)
 	GPIO.output(lightPin, false)
