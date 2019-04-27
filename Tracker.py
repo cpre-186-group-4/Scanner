@@ -1,4 +1,4 @@
-
+#!/usr/bin/python
 import csv
 import RPi.GPIO as GPIO
 from time import *
@@ -71,25 +71,26 @@ def printVectors(V):
 			csv_writer.writerow(row)
 	csv_file.close()
 
-try:
-	StartTime = time() #Intial Time
-	while pressed:
-		if(GPIO.input(buttonPin) == 0: #Pressed
-			button = 1 #Set it to pressed
-			camera.start_recording('3D_Scan.h264')#Start recording the video
-			sleep(sleepTime)
-			if button == 1:
-				if(GPIO.input(buttonPin) == 0: #Pressd again
-					pressed = false #End the loop
-			if button == 1: #Video is still running
-				count += 1
-				Vectors = calculate(Vectors, count, StartTime) #Calculate the data
-			GPIO.output(lightPin, button) #Keeps the light turned on
-			sleep(sleepTime)
+if __name__ == '__main__':
+	try:
+		StartTime = time() #Intial Time
+		while pressed:
+			if(GPIO.input(buttonPin) == 0: #Pressed
+				button = 1 #Set it to pressed
+				camera.start_recording('3D_Scan.h264')#Start recording the video
+				sleep(sleepTime)
+				if button == 1:
+					if(GPIO.input(buttonPin) == 0: #Pressd again
+						pressed = false #End the loop
+				if button == 1: #Video is still running
+					count += 1
+					Vectors = calculate(Vectors, count, StartTime) #Calculate the data
+				GPIO.output(lightPin, button) #Keeps the light turned on
+				sleep(sleepTime)
 
-#After button is pressed again, stop the video and close everything
-finally:
-	printVectors(Vectors)
-	GPIO.output(lightPin, false)
-	camera.stop_recording()
-	GPIO.cleanup()
+	#After button is pressed again, stop the video and close everything
+	finally:
+		printVectors(Vectors)
+		GPIO.output(lightPin, false)
+		camera.stop_recording()
+		GPIO.cleanup()
