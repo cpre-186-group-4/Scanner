@@ -1,14 +1,18 @@
 #!/usr/bin/python
+import os
 import csv
 import RPi.GPIO as GPIO
 from time import *
 import math
 from picamera import PiCamera
 import IMU
+
 #Sets up the Pi Camera
 camera = PiCamera()
+
 #Sets up the GPIO Pins so I can get a read for them
 GPIO.setmode(GPIO.BCM)
+
 #Sets up the IMU
 IMU.detectIMU()
 IMU.initIMU() 
@@ -17,14 +21,19 @@ sleepTime = 0.1 #Sets the sleep time so there is a slight delay
 lightPin = 0  #Which GPIO Pin the light is connected to 
 buttonPin = 0 #Which GPIO Pin the button is connected to 
 button = 0  #The output of the button is 1 for pressed or 0 for not | set it to not
-pressed = True
+pressed = False
 count = 0
 StartTime = 0
 Vectors = [] #Holds the output that i send to the CSV file
 
+Save_Path = 'CHANGE_ME' #Tells the code the exact spot it needs to be saved
+
+os.system("chmod u+x ~/Documents/Command.txt; /Users/haileylucas/Documents/Command.txt")
+
 #Sets up the GPIO Pins with the exact GPIO Pin
 GPIO.setup(lightPin, GPIO.out)
 GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPI.PUD_UP)
+
 GPIO.output(lightPin, False) #Make the light off at the start
 
 #Returns the magnitude
@@ -63,9 +72,17 @@ def format(V):
 	for i in range(len(V)):
 		V[i] = round(V[i],2)
 
-#Creates the CSV file and outputs all the data
+#Creates the unique CSV file and outputs all the data
 def printVectors(V):
-	with open('Positions.csv', mode = 'w') as csv_file:
+	num = 0
+	while true:
+	        name_of_file = raw_input("Positions" + num) #Adds a different number so there are no repeats
+	        completeName = os.path.join(Save_Path, name_of_file + ".csv") #Combines the whole file name
+		if os.path.isfile(completeName) #Checks to see if that exact file exsists already
+	       		num+=1
+	        else
+	       		break #Breaks the loop because that file with the number doesn't exisit yet
+	with open('Positions' + num + '.csv', mode = 'w') as csv_file: #Creates new files that don't exist by adding numbers
 		csv_writer = csv.writer(csv_file, delimiter = ' ')
 		for row in Vectors:
 			csv_writer.writerow(row)
@@ -74,19 +91,42 @@ def printVectors(V):
 if __name__ == '__main__':
 	try:
 		StartTime = time() #Intial Time
-		while pressed:
-			if(GPIO.input(buttonPin) == 0: #Pressed
-				button = 1 #Set it to pressed
-				camera.start_recording('3D_Scan.h264')#Start recording the video
-				sleep(sleepTime)
-				if button == 1:
-					if(GPIO.input(buttonPin) == 0: #Pressd again
-						pressed = false #End the loop
-				if button == 1: #Video is still running
+	        while pressed == False: #Intialized as False
+	       		if GPIO.input(buttonPin) == 0: #Pressed
+	       			button == 1 #Set button to pressed
+	       			num = 0
+				while true:#Loop to save every scan as a different file
+	       				name_of_file = raw_input("3D_Scan" + num) #Creates a similar file with a number difference
+			        	completeName = os.path.join(Save_Path, name_of_file + ".h264") #adds the save spot and type of file
+					if os.path.isfile(completeName) #Checks to see if that exact file exsists already
+	       					num+=1
+	        			else
+	       					break #Breaks the loop because that file with the number doesn't exisit yet
+	       			camera.start_recording(completeName)#Start recording the video
+	       			sleep(sleepTime)
+	       			pressed = True
+	        while pressed:
+	       		if(GPIO.input(buttonPin) == 0: #Pressd again
+					pressed = false #End the loop
+			if button == 1: #Video is still running
 					count += 1
 					Vectors = calculate(Vectors, count, StartTime) #Calculate the data
-				GPIO.output(lightPin, button) #Keeps the light turned on
-				sleep(sleepTime)
+			GPIO.output(lightPin, button) #Keeps the light turned on
+			sleep(sleepTime)
+			   
+#		while pressed:
+#			if GPIO.input(buttonPin) == 0: #Pressed
+#				button = 1 #Set it to pressed
+#				camera.start_recording('3D_Scan.h264')#Start recording the video
+#				sleep(sleepTime)
+#				if button == 1:
+#					if(GPIO.input(buttonPin) == 0: #Pressd again
+#						pressed = false #End the loop
+#				if button == 1: #Video is still running
+#					count += 1
+#					Vectors = calculate(Vectors, count, StartTime) #Calculate the data
+#				GPIO.output(lightPin, button) #Keeps the light turned on
+#				sleep(sleepTime)
 
 	#After button is pressed again, stop the video and close everything
 	finally:
