@@ -62,7 +62,7 @@ def calculate(Vectors, count, T):
 	Vectors.append([px, py, pz, Pitch, Roll, Yaw])
 	
 	#foramts the values in the array
-	format(Vectors(len([Vectors])-1)
+	format(Vectors(len([Vectors])-1))
 
 	#Updates the vectors array
 	return Vectors
@@ -78,9 +78,9 @@ def printVectors(V):
 	while true:
 	        name_of_file = raw_input("Positions" + num) #Adds a different number so there are no repeats
 	        completeName = os.path.join(Save_Path, name_of_file + ".csv") #Combines the whole file name
-		if os.path.isfile(completeName) #Checks to see if that exact file exsists already
+		if os.path.isfile(completeName): #Checks to see if that exact file exsists already
 	       		num+=1
-	        else
+	        else:
 	       		break #Breaks the loop because that file with the number doesn't exisit yet
 	with open('Positions' + num + '.csv', mode = 'w') as csv_file: #Creates new files that don't exist by adding numbers
 		csv_writer = csv.writer(csv_file, delimiter = ' ')
@@ -98,22 +98,22 @@ if __name__ == '__main__':
 				while true:#Loop to save every scan as a different file
 	       				name_of_file = raw_input("3D_Scan" + num) #Creates a similar file with a number difference
 			        	completeName = os.path.join(Save_Path, name_of_file + ".h264") #adds the save spot and type of file
-					if os.path.isfile(completeName) #Checks to see if that exact file exsists already
+					if os.path.isfile(completeName): #Checks to see if that exact file exsists already
 	       					num+=1
-	        			else
+	        			else:
 	       					break #Breaks the loop because that file with the number doesn't exisit yet
 	       			camera.start_recording(completeName)#Start recording the video
 	       			sleep(sleepTime)
 	       			pressed = True
 	        while pressed:
-	       		if(GPIO.input(buttonPin) == 0: #Pressd again
+	       		if GPIO.input(buttonPin) == 0: #Pressd again
 					pressed = false #End the loop
 			if button == 1: #Video is still running
 					count += 1
 					Vectors = calculate(Vectors, count, StartTime) #Calculate the data
 			GPIO.output(lightPin, button) #Keeps the light turned on
 			sleep(sleepTime)
-			   
+
 #		while pressed:
 #			if GPIO.input(buttonPin) == 0: #Pressed
 #				button = 1 #Set it to pressed
