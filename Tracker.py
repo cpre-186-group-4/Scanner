@@ -35,7 +35,7 @@ while true:
 	       		break #Breaks the loop because that file with the number doesn't exisit yet
 os.mkdir("~/Scans/" + name_of_folder)
 Save_Path =  "../Scans/" + name_of_folder + "/" #Tells the code the exact spot it needs to be saved
-os.system("chmod u+x ~/Scanner/Commands.txt; /Users/haileylucas/Documents/Command.txt")
+os.system("chmod u+x ~/Scanner/Commands.sh; ~/Scanner/Commands.sh")
 
 #Sets up the GPIO Pins with the exact GPIO Pin
 GPIO.setup(lightPin, GPIO.out)
