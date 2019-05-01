@@ -33,7 +33,7 @@ while true:
 	       		num+=1
 	        else:
 	       		break #Breaks the loop because that file with the number doesn't exisit yet
-
+os.mkdir("~/Scans/" + name_of_folder)
 Save_Path =  "../Scans/" + name_of_folder + "/" #Tells the code the exact spot it needs to be saved
 
 #os.system("chmod u+x ~/Documents/Command.txt; /Users/haileylucas/Documents/Command.txt")
