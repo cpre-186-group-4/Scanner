@@ -18,17 +18,25 @@ IMU.detectIMU()
 IMU.initIMU() 
 
 sleepTime = 0.1 #Sets the sleep time so there is a slight delay
-lightPin = 0  #Which GPIO Pin the light is connected to 
-buttonPin = 0 #Which GPIO Pin the button is connected to 
+lightPin = 20  #Which GPIO Pin the light is connected to 
+buttonPin = 26 #Which GPIO Pin the button is connected to 
 button = 0  #The output of the button is 1 for pressed or 0 for not | set it to not
 pressed = False
 count = 0
 StartTime = 0
 Vectors = [] #Holds the output that i send to the CSV file
 
-Save_Path = 'CHANGE_ME' #Tells the code the exact spot it needs to be saved
+num = 0
+while true:
+	        name_of_folder = "Scan" + str(num) #Adds a different number so there are no repeats
+		if os.path.isfile(name_of_folder): #Checks to see if that exact file exsists already
+	       		num+=1
+	        else:
+	       		break #Breaks the loop because that file with the number doesn't exisit yet
 
-os.system("chmod u+x ~/Documents/Command.txt; /Users/haileylucas/Documents/Command.txt")
+Save_Path =  "../Scans/" + name_of_folder + "/" #Tells the code the exact spot it needs to be saved
+
+#os.system("chmod u+x ~/Documents/Command.txt; /Users/haileylucas/Documents/Command.txt")
 
 #Sets up the GPIO Pins with the exact GPIO Pin
 GPIO.setup(lightPin, GPIO.out)
@@ -75,14 +83,8 @@ def format(V):
 #Creates the unique CSV file and outputs all the data
 def printVectors(V):
 	num = 0
-	while true:
-	        name_of_file = raw_input("Positions" + num) #Adds a different number so there are no repeats
-	        completeName = os.path.join(Save_Path, name_of_file + ".csv") #Combines the whole file name
-		if os.path.isfile(completeName): #Checks to see if that exact file exsists already
-	       		num+=1
-	        else:
-	       		break #Breaks the loop because that file with the number doesn't exisit yet
-	with open('Positions' + num + '.csv', mode = 'w') as csv_file: #Creates new files that don't exist by adding numbers
+	
+	with open('Positions.csv', mode = 'w') as csv_file: #Creates new files that don't exist by adding numbers
 		csv_writer = csv.writer(csv_file, delimiter = ' ')
 		for row in Vectors:
 			csv_writer.writerow(row)
@@ -95,14 +97,7 @@ if __name__ == '__main__':
 	       		if GPIO.input(buttonPin) == 0: #Pressed
 	       			button == 1 #Set button to pressed
 	       			num = 0
-				while true:#Loop to save every scan as a different file
-	       				name_of_file = raw_input("3D_Scan" + num) #Creates a similar file with a number difference
-			        	completeName = os.path.join(Save_Path, name_of_file + ".h264") #adds the save spot and type of file
-					if os.path.isfile(completeName): #Checks to see if that exact file exsists already
-	       					num+=1
-	        			else:
-	       					break #Breaks the loop because that file with the number doesn't exisit yet
-	       			camera.start_recording(completeName)#Start recording the video
+	       			camera.start_recording("3D_Scan.h264")#Start recording the video
 	       			sleep(sleepTime)
 	       			pressed = True
 	        while pressed:
