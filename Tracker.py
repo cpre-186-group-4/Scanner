@@ -27,19 +27,19 @@ StartTime = 0
 Vectors = [] #Holds the output that i send to the CSV file
 
 num = 0
-while true:
-	        name_of_folder = "Scan" + str(num) #Adds a different number so there are no repeats
-		if os.path.isfile(name_of_folder): #Checks to see if that exact file exsists already
+while True:
+	        name_of_folder = "/home/pi/Scans/Scan" + str(num) #Adds a different number so there are no repeats
+		if os.path.isdir(name_of_folder): #Checks to see if that exact file exsists already
 	       		num+=1
 	        else:
 	       		break #Breaks the loop because that file with the number doesn't exisit yet
-os.mkdir("~/Scans/" + name_of_folder)
-Save_Path =  "../Scans/" + name_of_folder + "/" #Tells the code the exact spot it needs to be saved
-os.system("chmod u+x ~/Scanner/Commands.sh; ~/Scanner/Commands.sh")
+os.mkdir(name_of_folder)
+Save_Path =  name_of_folder + "/" #Tells the code the exact spot it needs to be saved
+os.system("chmod u+x Commands.sh; ./Commands.sh")
 
 #Sets up the GPIO Pins with the exact GPIO Pin
-GPIO.setup(lightPin, GPIO.out)
-GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPI.PUD_UP)
+GPIO.setup(lightPin, GPIO.OUT)
+GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 GPIO.output(lightPin, False) #Make the light off at the start
 
@@ -101,30 +101,17 @@ if __name__ == '__main__':
 	       			pressed = True
 	        while pressed:
 	       		if GPIO.input(buttonPin) == 0: #Pressd again
-					pressed = false #End the loop
+					pressed = False #End the loop
 			if button == 1: #Video is still running
 					count += 1
 					Vectors = calculate(Vectors, count, StartTime) #Calculate the data
 			GPIO.output(lightPin, button) #Keeps the light turned on
 			sleep(sleepTime)
 
-#		while pressed:
-#			if GPIO.input(buttonPin) == 0: #Pressed
-#				button = 1 #Set it to pressed
-#				camera.start_recording('3D_Scan.h264')#Start recording the video
-#				sleep(sleepTime)
-#				if button == 1:
-#					if(GPIO.input(buttonPin) == 0: #Pressd again
-#						pressed = false #End the loop
-#				if button == 1: #Video is still running
-#					count += 1
-#					Vectors = calculate(Vectors, count, StartTime) #Calculate the data
-#				GPIO.output(lightPin, button) #Keeps the light turned on
-#				sleep(sleepTime)
 
 	#After button is pressed again, stop the video and close everything
 	finally:
 		printVectors(Vectors)
-		GPIO.output(lightPin, false)
+		GPIO.output(lightPin, False)
 		camera.stop_recording()
 		GPIO.cleanup()
